@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 using TaskManagementApi.BL.Interfaces;
 using TaskManagementApi.DAL.Models;
 
@@ -6,6 +7,7 @@ namespace TaskManagementApi.Controllers
 {
     [ApiController]
     [Route("[controller]")]
+    [Authorize]
     public class TasksController : ControllerBase
     {
         private readonly ITaskService _taskService;

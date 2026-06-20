@@ -10,6 +10,7 @@ namespace TaskManagementApi.DAL.Data
         }
 
         public DbSet<TaskItem> Tasks { get; set; }
+        public DbSet<User> Users { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -22,8 +23,17 @@ namespace TaskManagementApi.DAL.Data
                 entity.Property(e => e.Description).HasMaxLength(1000);
             });
 
+            modelBuilder.Entity<User>(entity =>
+            {
+                entity.HasKey(e => e.Id);
+                entity.Property(e => e.Username).IsRequired().HasMaxLength(100);
+                entity.Property(e => e.PasswordHash).IsRequired();
+                entity.HasIndex(e => e.Username).IsUnique();
+            });
+
             // Seed sample data
             modelBuilder.Entity<TaskItem>().HasData(TaskDataSeeder.GetSeedData());
+            modelBuilder.Entity<User>().HasData(UserDataSeeder.GetSeedData());
         }
     }
 }
