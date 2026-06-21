@@ -1,13 +1,14 @@
 using TaskManagementApi.DAL.Models;
+using TaskManagementApi.DAL.Models;
 
 namespace TaskManagementApi.DAL.Interfaces
 {
     public interface ITaskRepository
     {
-        Task<IEnumerable<TaskItem>> GetAllTasksAsync();
-        Task<TaskItem?> GetTaskByIdAsync(int id);
-        Task<TaskItem> CreateTaskAsync(TaskItem task);
-        Task<TaskItem?> UpdateTaskAsync(TaskItem task);
-        Task<bool> DeleteTaskAsync(int id);
+        Task<IEnumerable<TaskItem>> GetAllTasksAsync(int userId);
+        Task<TaskItem?> GetTaskByIdAsync(int id, int userId);
+        Task<TaskItem> CreateTaskAsync(TaskItem task, int userId);
+        Task<TaskItem?> UpdateTaskAsync(TaskItem task, int userId);
+        Task<bool> DeleteTaskAsync(int id, int userId);
     }
 }

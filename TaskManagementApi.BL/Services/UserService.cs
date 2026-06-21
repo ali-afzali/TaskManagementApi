@@ -1,5 +1,6 @@
 using TaskManagementApi.BL.Interfaces;
 using TaskManagementApi.DAL.Interfaces;
+using TaskManagementApi.DAL.Models;
 
 namespace TaskManagementApi.BL.Services
 {
@@ -26,6 +27,11 @@ namespace TaskManagementApi.BL.Services
             }
 
             return BCrypt.Net.BCrypt.Verify(password, user.PasswordHash);
+        }
+
+        public async Task<User?> GetUserByUsernameAsync(string username)
+        {
+            return await _userRepository.GetUserByUsernameAsync(username);
         }
     }
 }

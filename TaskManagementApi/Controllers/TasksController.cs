@@ -1,5 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
 using TaskManagementApi.BL.Interfaces;
 using TaskManagementApi.DAL.Models;
 
@@ -19,13 +21,31 @@ namespace TaskManagementApi.Controllers
             _logger = logger;
         }
 
+        private int GetCurrentUserId()
+        {
+            var userIdClaim = User.FindFirst("userId")?.Value;
+
+            if (string.IsNullOrEmpty(userIdClaim) || !int.TryParse(userIdClaim, out int userId))
+            {
+                throw new UnauthorizedAccessException("Unable to identify user from token");
+            }
+
+            return userId;
+        }
+
         [HttpGet(Name = "GetTasks")]
         public async Task<ActionResult<IEnumerable<TaskItem>>> GetTasks()
         {
             try
             {
-                var tasks = await _taskService.GetAllTasksAsync();
+                var userId = GetCurrentUserId();
+                var tasks = await _taskService.GetAllTasksAsync(userId);
                 return Ok(tasks);
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                _logger.LogWarning(ex, "Unauthorized access attempt");
+                return Unauthorized(ex.Message);
             }
             catch (Exception ex)
             {
@@ -39,12 +59,18 @@ namespace TaskManagementApi.Controllers
         {
             try
             {
-                var task = await _taskService.GetTaskByIdAsync(id);
+                var userId = GetCurrentUserId();
+                var task = await _taskService.GetTaskByIdAsync(id, userId);
                 if (task == null)
                 {
-                    return NotFound($"Task with ID {id} not found");
+                    return NotFound($"Task with ID {id} not found or you don't have access to it");
                 }
                 return Ok(task);
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                _logger.LogWarning(ex, "Unauthorized access attempt");
+                return Unauthorized(ex.Message);
             }
             catch (Exception ex)
             {
@@ -58,8 +84,14 @@ namespace TaskManagementApi.Controllers
         {
             try
             {
-                var createdTask = await _taskService.CreateTaskAsync(task);
+                var userId = GetCurrentUserId();
+                var createdTask = await _taskService.CreateTaskAsync(task, userId);
                 return CreatedAtAction(nameof(GetTask), new { id = createdTask.Id }, createdTask);
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                _logger.LogWarning(ex, "Unauthorized access attempt");
+                return Unauthorized(ex.Message);
             }
             catch (ArgumentException ex)
             {
@@ -78,12 +110,18 @@ namespace TaskManagementApi.Controllers
         {
             try
             {
-                var updatedTask = await _taskService.UpdateTaskAsync(id, task);
+                var userId = GetCurrentUserId();
+                var updatedTask = await _taskService.UpdateTaskAsync(id, task, userId);
                 if (updatedTask == null)
                 {
-                    return NotFound($"Task with ID {id} not found");
+                    return NotFound($"Task with ID {id} not found or you don't have access to it");
                 }
                 return Ok(updatedTask);
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                _logger.LogWarning(ex, "Unauthorized access attempt");
+                return Unauthorized(ex.Message);
             }
             catch (ArgumentException ex)
             {
@@ -102,12 +140,18 @@ namespace TaskManagementApi.Controllers
         {
             try
             {
-                var result = await _taskService.DeleteTaskAsync(id);
+                var userId = GetCurrentUserId();
+                var result = await _taskService.DeleteTaskAsync(id, userId);
                 if (!result)
                 {
-                    return NotFound($"Task with ID {id} not found");
+                    return NotFound($"Task with ID {id} not found or you don't have access to it");
                 }
                 return NoContent();
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                _logger.LogWarning(ex, "Unauthorized access attempt");
+                return Unauthorized(ex.Message);
             }
             catch (Exception ex)
             {

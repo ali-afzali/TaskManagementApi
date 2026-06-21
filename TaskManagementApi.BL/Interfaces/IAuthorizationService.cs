@@ -1,7 +1,9 @@
+using TaskManagementApi.BL.DTOs;
+
 namespace TaskManagementApi.BL.Interfaces
 {
     public interface IAuthorizationService
     {
-        Task<string> GenerateTokenAsync(string username, string password);
+        Task<LoginResponse> GenerateTokenAsync(string username, string password);
     }
 }

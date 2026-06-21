@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using TaskManagementApi.Models;
+using TaskManagementApi.BL.DTOs;
 
 namespace TaskManagementApi.Controllers
 {
@@ -18,7 +19,7 @@ namespace TaskManagementApi.Controllers
         }
 
         [HttpPost("login")]
-        public async Task<ActionResult<string>> Login([FromBody] LoginRequest request)
+        public async Task<ActionResult<TaskManagementApi.BL.DTOs.LoginResponse>> Login([FromBody] LoginRequest request)
         {
             try
             {
@@ -27,10 +28,10 @@ namespace TaskManagementApi.Controllers
                     return BadRequest(new { message = "Username and password are required" });
                 }
 
-                var token = await _authorizationService.GenerateTokenAsync(request.Username, request.Password);
-                _logger.LogInformation("Token generated successfully for user: {Username}", request.Username);
+                var loginResponse = await _authorizationService.GenerateTokenAsync(request.Username, request.Password);
+                _logger.LogInformation("Token generated successfully for user: {Username}, UserId: {UserId}", request.Username, loginResponse.UserId);
 
-                return Ok(token);
+                return Ok(loginResponse);
             }
             catch (UnauthorizedAccessException ex)
             {

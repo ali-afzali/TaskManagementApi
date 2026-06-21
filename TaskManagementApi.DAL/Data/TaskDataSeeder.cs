@@ -14,7 +14,9 @@ namespace TaskManagementApi.DAL.Data
                     Title = "Complete project documentation",
                     Description = "Write comprehensive documentation for the Task Management API",
                     Status = TaskItemStatus.InProgress,
-                    CreatedDate = DateTime.UtcNow.AddDays(-5)
+                    CreatedDate = DateTime.UtcNow.AddDays(-5),
+                    AssigneeUserId = 1,
+                    CreatedByUserId = 1
                 },
                 new TaskItem
                 {
@@ -23,7 +25,10 @@ namespace TaskManagementApi.DAL.Data
                     Description = "Review and merge pending pull requests from team members",
                     Status = TaskItemStatus.Completed,
                     CreatedDate = DateTime.UtcNow.AddDays(-3),
-                    UpdatedDate = DateTime.UtcNow.AddDays(-1)
+                    UpdatedDate = DateTime.UtcNow.AddDays(-1),
+                    AssigneeUserId = 1,
+                    CreatedByUserId = 1,
+                    UpdatedByUserId = 1
                 },
                 new TaskItem
                 {
@@ -31,7 +36,9 @@ namespace TaskManagementApi.DAL.Data
                     Title = "Setup CI/CD pipeline",
                     Description = "Configure continuous integration and deployment for the project",
                     Status = TaskItemStatus.NotStarted,
-                    CreatedDate = DateTime.UtcNow.AddDays(-2)
+                    CreatedDate = DateTime.UtcNow.AddDays(-2),
+                    AssigneeUserId = 1,
+                    CreatedByUserId = 1
                 },
                 new TaskItem
                 {
@@ -39,7 +46,9 @@ namespace TaskManagementApi.DAL.Data
                     Title = "Implement unit tests",
                     Description = "Add unit tests for all service layer methods",
                     Status = TaskItemStatus.InProgress,
-                    CreatedDate = DateTime.UtcNow.AddDays(-1)
+                    CreatedDate = DateTime.UtcNow.AddDays(-1),
+                    AssigneeUserId = 1,
+                    CreatedByUserId = 1
                 },
                 new TaskItem
                 {
@@ -48,7 +57,10 @@ namespace TaskManagementApi.DAL.Data
                     Description = "Update all NuGet packages to their latest stable versions",
                     Status = TaskItemStatus.Completed,
                     CreatedDate = DateTime.UtcNow.AddDays(-4),
-                    UpdatedDate = DateTime.UtcNow.AddDays(-2)
+                    UpdatedDate = DateTime.UtcNow.AddDays(-2),
+                    AssigneeUserId = 1,
+                    CreatedByUserId = 1,
+                    UpdatedByUserId = 1
                 }
             };
         }

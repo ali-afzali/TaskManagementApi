@@ -1,9 +1,11 @@
 using System.IdentityModel.Tokens.Jwt;
+using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using TaskManagementApi.BL.Interfaces;
+using TaskManagementApi.BL.DTOs;
 
 namespace TaskManagementApi.BL.Services
 {
@@ -26,7 +28,7 @@ namespace TaskManagementApi.BL.Services
             _expirationMinutes = int.TryParse(_configuration["Jwt:ExpirationMinutes"], out var minutes) ? minutes : 60;
         }
 
-        public async Task<string> GenerateTokenAsync(string username, string password)
+        public async Task<LoginResponse> GenerateTokenAsync(string username, string password)
         {
             if (string.IsNullOrWhiteSpace(username) || string.IsNullOrWhiteSpace(password))
             {
@@ -40,6 +42,13 @@ namespace TaskManagementApi.BL.Services
                 throw new UnauthorizedAccessException("Invalid username or password");
             }
 
+            // Get user details
+            var user = await _userService.GetUserByUsernameAsync(username);
+            if (user == null)
+            {
+                throw new UnauthorizedAccessException("User not found");
+            }
+
             var tokenHandler = new JwtSecurityTokenHandler();
             var key = Encoding.ASCII.GetBytes(_secretKey);
 
@@ -47,6 +56,7 @@ namespace TaskManagementApi.BL.Services
             {
                 new Claim(ClaimTypes.NameIdentifier, username),
                 new Claim(ClaimTypes.Name, username),
+                new Claim("userId", user.Id.ToString()),
                 new Claim("iat", DateTimeOffset.UtcNow.ToUnixTimeSeconds().ToString())
             };
 
@@ -60,7 +70,14 @@ namespace TaskManagementApi.BL.Services
             };
 
             var token = tokenHandler.CreateToken(tokenDescriptor);
-            return await Task.FromResult(tokenHandler.WriteToken(token));
+            var tokenString = tokenHandler.WriteToken(token);
+
+            return await Task.FromResult(new LoginResponse
+            {
+                Token = tokenString,
+                UserId = user.Id,
+                Username = user.Username
+            });
         }
     }
 }

@@ -21,6 +21,11 @@ namespace TaskManagementApi.DAL.Data
                 entity.HasKey(e => e.Id);
                 entity.Property(e => e.Title).IsRequired().HasMaxLength(200);
                 entity.Property(e => e.Description).HasMaxLength(1000);
+
+                // Audit and assignment fields
+                entity.Property(e => e.AssigneeUserId).IsRequired();
+                entity.Property(e => e.CreatedByUserId).IsRequired();
+                entity.Property(e => e.UpdatedByUserId);
             });
 
             modelBuilder.Entity<User>(entity =>

@@ -8,5 +8,10 @@ namespace TaskManagementApi.DAL.Models
         public TaskItemStatus Status { get; set; } = TaskItemStatus.NotStarted;
         public DateTime CreatedDate { get; set; }
         public DateTime? UpdatedDate { get; set; }
+
+        // Task assignment and audit tracking
+        public int AssigneeUserId { get; set; }
+        public int CreatedByUserId { get; set; }
+        public int? UpdatedByUserId { get; set; }
     }
 }
