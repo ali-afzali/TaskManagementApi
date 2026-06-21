@@ -1,15 +1,14 @@
 using System.IdentityModel.Tokens.Jwt;
-using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
-using TaskManagementApi.BL.Interfaces;
 using TaskManagementApi.BL.DTOs;
+using TaskManagementApi.BL.Interfaces;
 
 namespace TaskManagementApi.BL.Services
 {
-    public class AuthorizationService : IAuthorizationService
+    public class AuthenticationService : IAuthenticationService
     {
         private readonly IConfiguration _configuration;
         private readonly IUserService _userService;
@@ -18,7 +17,7 @@ namespace TaskManagementApi.BL.Services
         private readonly string _audience;
         private readonly int _expirationMinutes;
 
-        public AuthorizationService(IConfiguration configuration, IUserService userService)
+        public AuthenticationService(IConfiguration configuration, IUserService userService)
         {
             _configuration = configuration;
             _userService = userService;
@@ -35,14 +34,12 @@ namespace TaskManagementApi.BL.Services
                 throw new ArgumentException("Username and password cannot be empty");
             }
 
-            // Authenticate user
             var isAuthenticated = await _userService.AuthenticateUserAsync(username, password);
             if (!isAuthenticated)
             {
                 throw new UnauthorizedAccessException("Invalid username or password");
             }
 
-            // Get user details
             var user = await _userService.GetUserByUsernameAsync(username);
             if (user == null)
             {

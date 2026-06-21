@@ -15,8 +15,8 @@ This repository contains the backend only.
 
 ### Authentication
 
-- `POST /Authorization/login`
-- `POST /Authorization/logout`
+- `POST /Authentication/login`
+- `POST /Authentication/logout`
 - Passwords are hashed with `BCrypt`
 - Task endpoints require a bearer token
 

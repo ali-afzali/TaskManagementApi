@@ -5,7 +5,7 @@ using TaskManagementApi.DAL.Models;
 
 namespace TaskManagementApi.BL.Tests.Services;
 
-public class AuthorizationServiceTests
+public class AuthenticationServiceTests
 {
     [Fact]
     public async Task GenerateTokenAsync_ReturnsTokenForValidCredentials()
@@ -22,7 +22,7 @@ public class AuthorizationServiceTests
             }
         };
 
-        var service = new AuthorizationService(configuration, userService);
+        var service = new AuthenticationService(configuration, userService);
 
         var result = await service.GenerateTokenAsync("admin", "123456");
 
@@ -34,7 +34,7 @@ public class AuthorizationServiceTests
     [Fact]
     public async Task GenerateTokenAsync_ThrowsUnauthorizedAccessException_WhenAuthenticationFails()
     {
-        var service = new AuthorizationService(BuildConfiguration(), new StubUserService { IsAuthenticated = false });
+        var service = new AuthenticationService(BuildConfiguration(), new StubUserService { IsAuthenticated = false });
 
         await Assert.ThrowsAsync<UnauthorizedAccessException>(() => service.GenerateTokenAsync("admin", "wrong-password"));
     }

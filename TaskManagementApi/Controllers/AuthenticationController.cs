@@ -1,25 +1,26 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
-using TaskManagementApi.Models;
 using TaskManagementApi.BL.DTOs;
+using TaskManagementApi.BL.Interfaces;
+using TaskManagementApi.Models;
 
 namespace TaskManagementApi.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    public class AuthorizationController : ControllerBase
+    public class AuthenticationController : ControllerBase
     {
-        private readonly BL.Interfaces.IAuthorizationService _authorizationService;
-        private readonly ILogger<AuthorizationController> _logger;
+        private readonly IAuthenticationService _authenticationService;
+        private readonly ILogger<AuthenticationController> _logger;
 
-        public AuthorizationController(BL.Interfaces.IAuthorizationService authorizationService, ILogger<AuthorizationController> logger)
+        public AuthenticationController(IAuthenticationService authenticationService, ILogger<AuthenticationController> logger)
         {
-            _authorizationService = authorizationService;
+            _authenticationService = authenticationService;
             _logger = logger;
         }
 
         [HttpPost("login")]
-        public async Task<ActionResult<TaskManagementApi.BL.DTOs.LoginResponse>> Login([FromBody] LoginRequest request)
+        public async Task<ActionResult<LoginResponse>> Login([FromBody] LoginRequest request)
         {
             try
             {
@@ -28,7 +29,7 @@ namespace TaskManagementApi.Controllers
                     return BadRequest(new { message = "Username and password are required" });
                 }
 
-                var loginResponse = await _authorizationService.GenerateTokenAsync(request.Username, request.Password);
+                var loginResponse = await _authenticationService.GenerateTokenAsync(request.Username, request.Password);
                 _logger.LogInformation("Token generated successfully for user: {Username}, UserId: {UserId}", request.Username, loginResponse.UserId);
 
                 return Ok(loginResponse);
@@ -45,7 +46,7 @@ namespace TaskManagementApi.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error generating authorization token");
+                _logger.LogError(ex, "Error generating authentication token");
                 return StatusCode(500, new { message = "An error occurred while generating the token" });
             }
         }
@@ -66,7 +67,5 @@ namespace TaskManagementApi.Controllers
                 return StatusCode(500, new { message = "An error occurred while logging out" });
             }
         }
-
-
     }
 }

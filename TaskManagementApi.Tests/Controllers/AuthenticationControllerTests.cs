@@ -7,12 +7,12 @@ using TaskManagementApi.Models;
 
 namespace TaskManagementApi.Tests.Controllers;
 
-public class AuthorizationControllerTests
+public class AuthenticationControllerTests
 {
     [Fact]
     public async Task Login_ReturnsBadRequest_WhenCredentialsAreMissing()
     {
-        var controller = new AuthorizationController(new StubAuthorizationService(), NullLogger<AuthorizationController>.Instance);
+        var controller = new AuthenticationController(new StubAuthenticationService(), NullLogger<AuthenticationController>.Instance);
 
         var result = await controller.Login(new LoginRequest { Username = string.Empty, Password = string.Empty });
 
@@ -30,9 +30,9 @@ public class AuthorizationControllerTests
             Username = "admin"
         };
 
-        var controller = new AuthorizationController(
-            new StubAuthorizationService(expectedResponse),
-            NullLogger<AuthorizationController>.Instance);
+        var controller = new AuthenticationController(
+            new StubAuthenticationService(expectedResponse),
+            NullLogger<AuthenticationController>.Instance);
 
         var result = await controller.Login(new LoginRequest { Username = "admin", Password = "123456" });
 
@@ -43,21 +43,21 @@ public class AuthorizationControllerTests
         Assert.Equal(expectedResponse.Username, response.Username);
     }
 
-    private sealed class StubAuthorizationService : IAuthorizationService
+    private sealed class StubAuthenticationService : IAuthenticationService
     {
-        private readonly LoginResponse _response;
+        private readonly TaskManagementApi.BL.DTOs.LoginResponse _response;
 
-        public StubAuthorizationService()
-            : this(new LoginResponse())
+        public StubAuthenticationService()
+            : this(new TaskManagementApi.BL.DTOs.LoginResponse())
         {
         }
 
-        public StubAuthorizationService(LoginResponse response)
+        public StubAuthenticationService(TaskManagementApi.BL.DTOs.LoginResponse response)
         {
             _response = response;
         }
 
-        public Task<LoginResponse> GenerateTokenAsync(string username, string password)
+        public Task<TaskManagementApi.BL.DTOs.LoginResponse> GenerateTokenAsync(string username, string password)
         {
             return Task.FromResult(_response);
         }
