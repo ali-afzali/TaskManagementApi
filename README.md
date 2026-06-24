@@ -39,11 +39,6 @@ Each task includes:
 - `createdByUserId`
 - `updatedByUserId`
 
-### Validation
-
-- Task title is required
-- Standard HTTP responses are returned for common failures
-
 ## Tech stack
 
 - `.NET 8`
@@ -52,7 +47,7 @@ Each task includes:
 - `EF Core InMemory`
 - `JWT`
 - `BCrypt.NET`
-- `Swagger / OpenAPI`
+- `Swagger`
 
 ## Project structure
 
@@ -65,18 +60,6 @@ Each task includes:
 ### Prerequisites
 
 - `.NET 8 SDK`
-
-### Start the API
-
-```bash
-dotnet restore
-dotnet run --project TaskManagementApi
-```
-
-Once it starts, open:
-
-- `https://localhost:7217/swagger`
-- `http://localhost:5218/swagger`
 
 ## Default credentials
 
@@ -125,12 +108,6 @@ The solution includes three test projects:
 - `TaskManagementApi.DAL.Tests`
 
 They cover a few sample scenarios across controllers, services, repositories, and seeded data.
-
-Run all tests with:
-
-```bash
-dotnet test TaskManagementApi.sln
-```
 
 ## What I left out on purpose
 
